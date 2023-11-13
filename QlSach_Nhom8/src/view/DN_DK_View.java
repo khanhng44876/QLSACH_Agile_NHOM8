@@ -1,13 +1,16 @@
+
 package view;
 
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import model.Account;
 
+
 public class DN_DK_View extends javax.swing.JFrame {
 
     ArrayList<Account> list = new ArrayList<>();
 
+    
     public DN_DK_View() {
         initComponents();
         setLocationRelativeTo(null);
@@ -178,10 +181,6 @@ public class DN_DK_View extends javax.swing.JFrame {
         String usn = txtDKUsn.getText();
         String pwd = txtDKPwd.getText();
         String cpwd = txtDKPwd2.getText();
-        if (usn.isEmpty() || pwd.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Tên đăng ký và mật khẩu không được để trống !");
-            return;
-        }
         if (!cpwd.equals(pwd)) {
             JOptionPane.showMessageDialog(this, "Nhập lại mật khẩu sai !");
         } else {
