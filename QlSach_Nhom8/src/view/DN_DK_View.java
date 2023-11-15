@@ -1,18 +1,41 @@
+
 package view;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import model.Account;
+import model.Sach_Model;
+import service.Account_Sevice;
+import service.DBConnect;
+
 
 public class DN_DK_View extends javax.swing.JFrame {
 
-    ArrayList<Account> list = new ArrayList<>();
-
+    Account_Sevice as = new Account_Sevice();
+    Connection con = null;  // biến kết nối
+     PreparedStatement ps = null;  // thực thi câu lệnh
+     ResultSet rs = null;   // tập kết quả truy vấn
+     String sql = null;
+    
     public DN_DK_View() {
         initComponents();
         setLocationRelativeTo(null);
     }
 
+    public Account save(){
+        Account acc  = new Account();
+        
+  
+        acc.setUserName(txtDKUsn.getText());
+        acc.setPassWord(txtDKPwd.getText());
+        acc.setConfirmPwd(txtDKPwd2.getText());
+        
+        return acc;
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -175,50 +198,53 @@ public class DN_DK_View extends javax.swing.JFrame {
 
     private void btnDangKyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDangKyActionPerformed
 
-        String usn = txtDKUsn.getText();
-        String pwd = txtDKPwd.getText();
-        String cpwd = txtDKPwd2.getText();
-        if (usn.isEmpty() || pwd.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Tên đăng ký và mật khẩu không được để trống !");
-            return;
-        }
-        if (!cpwd.equals(pwd)) {
-            JOptionPane.showMessageDialog(this, "Nhập lại mật khẩu sai !");
-        } else {
-            Account newUser = new Account(usn, pwd, cpwd);
-            list.add(newUser);
-            JOptionPane.showMessageDialog(this, "Đăng ký thành công !");
+        try {
+            //Hỏi để biết có muốn thêm hay không
+            int hoi = JOptionPane.showConfirmDialog(this, "Bạn có chắc muốn đăng ký hay không ?");
+            if (hoi != JOptionPane.YES_OPTION) {
+                return;
+            }
+
+            if(txtDKUsn.getText().equals("")||txtDKPwd.getText().equals("")||txtDKPwd2.getText().equals("")){
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!");
+                return;
+            }
+            Account acc = save();
+            if (as.insertAcc(acc) != null) {
+                JOptionPane.showMessageDialog(this, "Đăng ký thành công");
+            } else {
+                JOptionPane.showMessageDialog(this, "Đăng ký thất bại");
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi nút Đăng ký");
         }
     }//GEN-LAST:event_btnDangKyActionPerformed
 
     private void btnDangNhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDangNhapActionPerformed
-        String usn = txtDNUsn.getText();
-        String pwd = txtDNPwd.getText();
-        boolean found = false;
+        con = DBConnect.getConnection();
+        sql = "Select * from ACCOUNT where usename = ? and pass = ?";
+        try{
+            ps = con.prepareCall(sql);
+            ps.setString(1, txtDNUsn.getText());
+            ps.setString(2, txtDNPwd.getText());
 
-        if (usn.isEmpty() || pwd.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Tên đăng nhập và mật khẩu không được để trống !");
-        } else {
-
-            for (Account acc : list) {
-                if (usn.equals(acc.getUserName())) {
-                    if (pwd.equals(acc.getPassWord())) {
-                        JOptionPane.showMessageDialog(this, "Đăng nhập thành công !");
-                        found = true;
-                        return;
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Sai mật khẩu !");
-                        found = false;
-                        return;
-                    }
-                }
+            rs = ps.executeQuery();
+            
+            if(txtDNUsn.getText().equals("")||txtDNPwd.getText().equals("")){
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!");
+            }else if(rs.next()){
+                Sach_View sv =  new Sach_View();
+                sv.setVisible(true);
+                this.dispose();
+                JOptionPane.showMessageDialog(this, "Đăng nhập thành công!");
+            }else{
+                JOptionPane.showMessageDialog(this, "Sai thông tin tài khoản mật khẩu!");
             }
-            if (!found) {
-                JOptionPane.showMessageDialog(this, "Tài khoản không tồn tại !");
-            }
+        }catch(Exception e){
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Lỗi nút Đăng nhập!");
         }
-
-
     }//GEN-LAST:event_btnDangNhapActionPerformed
 
     /**
