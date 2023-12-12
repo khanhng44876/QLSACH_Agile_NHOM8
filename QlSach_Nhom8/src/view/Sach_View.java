@@ -20,7 +20,7 @@ public class Sach_View extends javax.swing.JFrame {
         model = (DefaultTableModel) tblSach.getModel();
         fillTable();
     }
-    
+    //hihi
     public void fillTable() {
 
         model.setRowCount(0);// xóa sạch bảng
