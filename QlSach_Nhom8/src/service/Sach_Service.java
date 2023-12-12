@@ -26,6 +26,8 @@ public class Sach_Service {
                Sach_Model sv = new Sach_Model(
                  rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getInt(6), rs.getDouble(7)
                );
+
+                 
                
                listSV.add(sv);
               
