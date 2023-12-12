@@ -10,7 +10,7 @@ public class DN_DK_View extends javax.swing.JFrame {
 
     ArrayList<Account> list = new ArrayList<>();
 
-    
+    //no problem
     public DN_DK_View() {
         initComponents();
         setLocationRelativeTo(null);
